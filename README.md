@@ -2,7 +2,7 @@
 
 > 免费开源的深度学习和 AI 学习网站，让每个人都参与到 AI 中来！
 
-🌐 **网站**: https://aijvs.com
+🌐 **网站**: https://blog.aijvs.com
 
 📝 **博客框架**: Hexo
 
