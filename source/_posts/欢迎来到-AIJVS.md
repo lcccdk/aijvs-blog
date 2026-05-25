@@ -67,7 +67,7 @@ tags:
 
 如果你有任何建议或想法，欢迎通过以下方式联系我们：
 
-- 📧 邮箱：contact@aijvs.com
+- 📧 邮箱：hi@aijvs.com
 - 💻 GitHub: https://github.com/aijvs
 
 **AIJVS - 让每个人都参与到 AI 学习中来！**
