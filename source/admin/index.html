@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIJVS 管理后台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+    
+    /* 登录页面 */
+    .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    .login-box h1 { text-align: center; color: #333; margin-bottom: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+    .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+    .form-group input:focus { outline: none; border-color: #49b1f5; }
+    .btn { width: 100%; padding: 12px; background: #49b1f5; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
+    .btn:hover { background: #37a3d6; }
+    .error-msg { color: #f00; font-size: 14px; margin-top: 10px; text-align: center; }
+    
+    /* 管理后台主界面 */
+    .admin-container { display: none; }
+    .admin-container.active { display: block; }
+    .header { background: #49b1f5; color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 24px; }
+    .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; }
+    
+    .main-content { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .stat-card h3 { color: #666; font-size: 14px; margin-bottom: 10px; }
+    .stat-card .number { font-size: 36px; font-weight: bold; color: #49b1f5; }
+    
+    .content-card { background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    .card-header { padding: 20px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .card-header h2 { font-size: 18px; color: #333; }
+    .card-body { padding: 25px; }
+    
+    .posts-table { width: 100%; border-collapse: collapse; }
+    .posts-table th, .posts-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    .posts-table th { background: #f9f9f9; color: #555; font-weight: 600; }
+    .posts-table tr:hover { background: #f5f5f5; }
+    .posts-table .actions { display: flex; gap: 10px; }
+    .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 4px; border: none; cursor: pointer; }
+    .btn-edit { background: #49b1f5; color: white; }
+    .btn-delete { background: #f44336; color: white; }
+    
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+    .modal.active { display: flex; justify-content: center; align-items: center; }
+    .modal-content { background: white; border-radius: 10px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 20px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h2 { font-size: 18px; }
+    .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+    .modal-body { padding: 25px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    textarea { width: 100%; min-height: 300px; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-size: 14px; resize: vertical; }
+    
+    .tag-input { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; min-height: 40px; }
+    .tag-item { background: #49b1f5; color: white; padding: 4px 10px; border-radius: 15px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+    .tag-item span { cursor: pointer; }
+    .tag-input input { flex: 1; border: none; outline: none; padding: 4px; }
+  </style>
+</head>
+<body>
+  <!-- 登录页面 -->
+  <div id="loginPage" class="login-container">
+    <div class="login-box">
+      <h1>🔐 AIJVS 管理后台</h1>
+      <div class="form-group">
+        <label>用户名</label>
+        <input type="text" id="username" placeholder="请输入用户名" value="admin">
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="password" placeholder="请输入密码" value="admin123">
+      </div>
+      <button class="btn" onclick="login()">登录</button>
+      <div id="loginError" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- 管理后台主界面 -->
+  <div id="adminPanel" class="admin-container">
+    <div class="header">
+      <h1>📊 AIJVS 博客管理后台</h1>
+      <button class="logout-btn" onclick="logout()">退出登录</button>
+    </div>
+    
+    <div class="main-content">
+      <!-- 统计卡片 -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>文章总数</h3>
+          <div class="number" id="statPosts">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>分类数量</h3>
+          <div class="number" id="statCategories">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>标签数量</h3>
+          <div class="number" id="statTags">0</div>
+        </div>
+      </div>
+      
+      <!-- 文章管理 -->
+      <div class="content-card">
+        <div class="card-header">
+          <h2>📝 文章管理</h2>
+          <button class="btn btn-sm btn-edit" onclick="openEditor()">+ 新建文章</button>
+        </div>
+        <div class="card-body">
+          <table class="posts-table">
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>日期</th>
+                <th>分类</th>
+                <th>标签</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="postsList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文章编辑模态框 -->
+  <div id="editorModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">编辑文章</h2>
+        <button class="close-btn" onclick="closeEditor()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>标题</label>
+          <input type="text" id="editTitle" placeholder="文章标题">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>分类（逗号分隔）</label>
+            <input type="text" id="editCategories" placeholder="分类 1, 分类 2">
+          </div>
+          <div class="form-group">
+            <label>标签（逗号分隔）</label>
+            <input type="text" id="editTags" placeholder="标签 1, 标签 2">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Markdown 内容</label>
+          <textarea id="editContent" placeholder="# 文章标题&#10;&#10;正文内容..."></textarea>
+        </div>
+        <button class="btn" onclick="savePost()" style="margin-top: 20px;">保存文章</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    let currentFilename = null;
+
+    // 检查登录状态
+    async function checkAuth() {
+      try {
+        const res = await fetch(`${API_BASE}/user`);
+        if (res.ok) {
+          showAdminPanel();
+        }
+      } catch (e) {}
+    }
+
+    // 登录
+    async function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          showAdminPanel();
+        } else {
+          document.getElementById('loginError').textContent = data.message;
+        }
+      } catch (e) {
+        document.getElementById('loginError').textContent = '登录失败，请重试';
+      }
+    }
+
+    // 登出
+    async function logout() {
+      await fetch(`${API_BASE}/logout`, { method: 'POST' });
+      location.reload();
+    }
+
+    // 显示管理面板
+    function showAdminPanel() {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('adminPanel').classList.add('active');
+      loadStats();
+      loadPosts();
+    }
+
+    // 加载统计
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API_BASE}/stats`);
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('statPosts').textContent = data.stats.posts;
+          document.getElementById('statCategories').textContent = data.stats.categories;
+          document.getElementById('statTags').textContent = data.stats.tags;
+        }
+      } catch (e) {}
+    }
+
+    // 加载文章列表
+    async function loadPosts() {
+      try {
+        const res = await fetch(`${API_BASE}/posts`);
+        const data = await res.json();
+        if (data.success) {
+          const tbody = document.getElementById('postsList');
+          tbody.innerHTML = data.posts.map(post => `
+            <tr>
+              <td>${post.title}</td>
+              <td>${new Date(post.date).toLocaleDateString('zh-CN')}</td>
+              <td>${Array.isArray(post.categories) ? post.categories.join(', ') : post.categories}</td>
+              <td>${Array.isArray(post.tags) ? post.tags.join(', ') : post.tags}</td>
+              <td class="actions">
+                <button class="btn-sm btn-edit" onclick="editPost('${post.filename}')">编辑</button>
+                <button class="btn-sm btn-delete" onclick="deletePost('${post.filename}')">删除</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {}
+    }
+
+    // 打开编辑器
+    function openEditor(filename = null) {
+      currentFilename = filename;
+      const modal = document.getElementById('editorModal');
+      modal.classList.add('active');
+      
+      if (filename) {
+        document.getElementById('modalTitle').textContent = '编辑文章';
+        loadPostForEdit(filename);
+      } else {
+        document.getElementById('modalTitle').textContent = '新建文章';
+        document.getElementById('editTitle').value = '';
+        document.getElementById('editCategories').value = '';
+        document.getElementById('editTags').value = '';
+        document.getElementById('editContent').value = '';
+      }
+    }
+
+    // 关闭编辑器
+    function closeEditor() {
+      document.getElementById('editorModal').classList.remove('active');
+      currentFilename = null;
+    }
+
+    // 加载文章用于编辑
+    async function loadPostForEdit(filename) {
+      try {
+        const res = await fetch(`${API_BASE}/posts/${filename}`);
+        const data = await res.json();
+        if (data.success) {
+          const post = data.post;
+          document.getElementById('editTitle').value = post.data.title || '';
+          document.getElementById('editCategories').value = Array.isArray(post.data.categories) ? post.data.categories.join(', ') : '';
+          document.getElementById('editTags').value = Array.isArray(post.data.tags) ? post.data.tags.join(', ') : '';
+          document.getElementById('editContent').value = post.content.trim();
+        }
+      } catch (e) {}
+    }
+
+    // 保存文章
+    async function savePost() {
+      const title = document.getElementById('editTitle').value;
+      const categories = document.getElementById('editCategories').value.split(',').map(s => s.trim()).filter(s => s);
+      const tags = document.getElementById('editTags').value.split(',').map(s => s.trim()).filter(s => s);
+      const content = document.getElementById('editContent').value;
+      
+      try {
+        const res = await fetch(`${API_BASE}/posts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: currentFilename || title,
+            title,
+            categories,
+            tags,
+            content
+          })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          alert('文章已保存');
+          closeEditor();
+          loadPosts();
+          loadStats();
+        } else {
+          alert('保存失败：' + data.error);
+        }
+      } catch (e) {
+        alert('保存失败，请重试');
+      }
+    }
+
+    // 删除文章
+    async function deletePost(filename) {
+      if (!confirm('确定要删除这篇文章吗？')) return;
+      
+      try {
+        const res = await fetch(`${API_BASE}/posts/${filename}`, { method: 'DELETE' });
+        const data = await res.json();
+        
+        if (data.success) {
+          alert('文章已删除');
+          loadPosts();
+          loadStats();
+        } else {
+          alert('删除失败：' + data.error);
+        }
+      } catch (e) {
+        alert('删除失败，请重试');
+      }
+    }
+
+    // 页面加载时检查登录状态
+    checkAuth();
+  </script>
+</body>
+</html>
