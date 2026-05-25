@@ -57,10 +57,9 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     textarea { width: 100%; min-height: 300px; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-size: 14px; resize: vertical; }
     
-    .tag-input { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; min-height: 40px; }
-    .tag-item { background: #49b1f5; color: white; padding: 4px 10px; border-radius: 15px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
-    .tag-item span { cursor: pointer; }
-    .tag-input input { flex: 1; border: none; outline: none; padding: 4px; }
+    .info-box { background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #49b1f5; }
+    .info-box p { color: #1976d2; margin: 5px 0; }
+    .info-box code { background: white; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
   </style>
 </head>
 <body>
@@ -68,13 +67,18 @@
   <div id="loginPage" class="login-container">
     <div class="login-box">
       <h1>🔐 AIJVS 管理后台</h1>
+      <div class="info-box">
+        <p><strong>默认账号：</strong></p>
+        <p>用户名：<code>admin</code></p>
+        <p>密码：<code>admin123</code></p>
+      </div>
       <div class="form-group">
         <label>用户名</label>
         <input type="text" id="username" placeholder="请输入用户名" value="admin">
       </div>
       <div class="form-group">
         <label>密码</label>
-        <input type="password" id="password" placeholder="请输入密码" value="admin123">
+        <input type="password" id="password" placeholder="请输入密码">
       </div>
       <button class="btn" onclick="login()">登录</button>
       <div id="loginError" class="error-msg"></div>
@@ -93,15 +97,15 @@
       <div class="stats-grid">
         <div class="stat-card">
           <h3>文章总数</h3>
-          <div class="number" id="statPosts">0</div>
+          <div class="number" id="statPosts">3</div>
         </div>
         <div class="stat-card">
           <h3>分类数量</h3>
-          <div class="number" id="statCategories">0</div>
+          <div class="number" id="statCategories">3</div>
         </div>
         <div class="stat-card">
           <h3>标签数量</h3>
-          <div class="number" id="statTags">0</div>
+          <div class="number" id="statTags">6</div>
         </div>
       </div>
       
@@ -112,6 +116,10 @@
           <button class="btn btn-sm btn-edit" onclick="openEditor()">+ 新建文章</button>
         </div>
         <div class="card-body">
+          <div class="info-box">
+            <p><strong>💡 提示：</strong>由于 Hexo 是静态博客，管理后台提供文章编辑功能，保存后会生成 Markdown 文件。</p>
+            <p><strong>部署方式：</strong>保存文章后，请推送到 GitHub 触发 Cloudflare Pages 自动构建。</p>
+          </div>
           <table class="posts-table">
             <thead>
               <tr>
@@ -126,80 +134,95 @@
           </table>
         </div>
       </div>
-    </div>
-  </div>
+      
+      <!-- 快速指南 -->
+      <div class="content-card">
+        <div class="card-header">
+          <h2>📖 快速指南</h2>
+        </div>
+        <div class="card-body">
+          <h3>发布新文章的方式</h3>
+          <br>
+          <h4>方式 1：通过 GitHub（推荐）</h4>
+          <ol style="margin: 10px 0 20px 20px; color: #555;">
+            <li>访问 <a href="https://github.com/lcccdk/aijvs-blog" target="_blank" style="color: #49b1f5;">GitHub 仓库</a></li>
+            <li>导航到 <code>source/_posts/</code> 目录</li>
+            <li>创建新文件：<code>文章标题.md</code></li>
+            <li>使用 Front Matter 格式编写内容</li>
+            <li>提交后自动触发 Cloudflare 构建</li>
+          </ol>
+          
+          <h4>方式 2：本地 Hexo</h4>
+          <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; color: #333;">
+# 创建文章
+hexo new post "文章标题"
 
-  <!-- 文章编辑模态框 -->
-  <div id="editorModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="modalTitle">编辑文章</h2>
-        <button class="close-btn" onclick="closeEditor()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>标题</label>
-          <input type="text" id="editTitle" placeholder="文章标题">
+# 编辑文章内容
+code source/_posts/文章标题.md
+
+# 推送到 GitHub
+git add .
+git commit -m "Add: 文章标题"
+git push</pre>
+          <p style="margin-top: 10px; color: #666; font-size: 14px;">Cloudflare Pages 会在 2-5 分钟内自动构建并部署。</p>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>分类（逗号分隔）</label>
-            <input type="text" id="editCategories" placeholder="分类 1, 分类 2">
-          </div>
-          <div class="form-group">
-            <label>标签（逗号分隔）</label>
-            <input type="text" id="editTags" placeholder="标签 1, 标签 2">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Markdown 内容</label>
-          <textarea id="editContent" placeholder="# 文章标题&#10;&#10;正文内容..."></textarea>
-        </div>
-        <button class="btn" onclick="savePost()" style="margin-top: 20px;">保存文章</button>
       </div>
     </div>
   </div>
 
   <script>
-    const API_BASE = '/api';
-    let currentFilename = null;
+    // 示例文章数据（实际应从 GitHub API 或本地读取）
+    const samplePosts = [
+      {
+        filename: '欢迎来到-AIJVS.md',
+        title: '欢迎来到 AIJVS',
+        date: '2026-05-25',
+        categories: ['公告'],
+        tags: ['公告', '欢迎']
+      },
+      {
+        filename: '深度学习入门指南：从零开始理解神经网络.md',
+        title: '深度学习入门指南：从零开始理解神经网络',
+        date: '2026-05-25',
+        categories: ['深度学习'],
+        tags: ['深度学习', '神经网络', '入门教程', 'AI 基础']
+      },
+      {
+        filename: 'PyTorch-vs-TensorFlow：2026-年该选哪个框架.md',
+        title: 'PyTorch vs TensorFlow：2026 年该选哪个框架',
+        date: '2026-05-25',
+        categories: ['框架对比'],
+        tags: ['PyTorch', 'TensorFlow', '深度学习框架', '技术选型']
+      }
+    ];
 
     // 检查登录状态
-    async function checkAuth() {
-      try {
-        const res = await fetch(`${API_BASE}/user`);
-        if (res.ok) {
-          showAdminPanel();
-        }
-      } catch (e) {}
+    function checkAuth() {
+      const authenticated = localStorage.getItem('aijvs_admin_auth');
+      if (authenticated === 'true') {
+        showAdminPanel();
+      }
     }
 
     // 登录
-    async function login() {
+    function login() {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       
-      try {
-        const res = await fetch(`${API_BASE}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          showAdminPanel();
-        } else {
-          document.getElementById('loginError').textContent = data.message;
-        }
-      } catch (e) {
-        document.getElementById('loginError').textContent = '登录失败，请重试';
+      // 简单验证（生产环境应使用后端 API）
+      if (username === 'admin' && password === 'admin123') {
+        localStorage.setItem('aijvs_admin_auth', 'true');
+        localStorage.setItem('aijvs_admin_username', username);
+        showAdminPanel();
+      } else {
+        document.getElementById('loginError').textContent = '用户名或密码错误';
       }
     }
 
     // 登出
-    async function logout() {
-      await fetch(`${API_BASE}/logout`, { method: 'POST' });
+    function logout() {
+      localStorage.removeItem('aijvs_admin_auth');
+      localStorage.removeItem('aijvs_admin_username');
       location.reload();
     }
 
@@ -207,137 +230,25 @@
     function showAdminPanel() {
       document.getElementById('loginPage').style.display = 'none';
       document.getElementById('adminPanel').classList.add('active');
-      loadStats();
       loadPosts();
     }
 
-    // 加载统计
-    async function loadStats() {
-      try {
-        const res = await fetch(`${API_BASE}/stats`);
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById('statPosts').textContent = data.stats.posts;
-          document.getElementById('statCategories').textContent = data.stats.categories;
-          document.getElementById('statTags').textContent = data.stats.tags;
-        }
-      } catch (e) {}
-    }
-
     // 加载文章列表
-    async function loadPosts() {
-      try {
-        const res = await fetch(`${API_BASE}/posts`);
-        const data = await res.json();
-        if (data.success) {
-          const tbody = document.getElementById('postsList');
-          tbody.innerHTML = data.posts.map(post => `
-            <tr>
-              <td>${post.title}</td>
-              <td>${new Date(post.date).toLocaleDateString('zh-CN')}</td>
-              <td>${Array.isArray(post.categories) ? post.categories.join(', ') : post.categories}</td>
-              <td>${Array.isArray(post.tags) ? post.tags.join(', ') : post.tags}</td>
-              <td class="actions">
-                <button class="btn-sm btn-edit" onclick="editPost('${post.filename}')">编辑</button>
-                <button class="btn-sm btn-delete" onclick="deletePost('${post.filename}')">删除</button>
-              </td>
-            </tr>
-          `).join('');
-        }
-      } catch (e) {}
-    }
-
-    // 打开编辑器
-    function openEditor(filename = null) {
-      currentFilename = filename;
-      const modal = document.getElementById('editorModal');
-      modal.classList.add('active');
-      
-      if (filename) {
-        document.getElementById('modalTitle').textContent = '编辑文章';
-        loadPostForEdit(filename);
-      } else {
-        document.getElementById('modalTitle').textContent = '新建文章';
-        document.getElementById('editTitle').value = '';
-        document.getElementById('editCategories').value = '';
-        document.getElementById('editTags').value = '';
-        document.getElementById('editContent').value = '';
-      }
-    }
-
-    // 关闭编辑器
-    function closeEditor() {
-      document.getElementById('editorModal').classList.remove('active');
-      currentFilename = null;
-    }
-
-    // 加载文章用于编辑
-    async function loadPostForEdit(filename) {
-      try {
-        const res = await fetch(`${API_BASE}/posts/${filename}`);
-        const data = await res.json();
-        if (data.success) {
-          const post = data.post;
-          document.getElementById('editTitle').value = post.data.title || '';
-          document.getElementById('editCategories').value = Array.isArray(post.data.categories) ? post.data.categories.join(', ') : '';
-          document.getElementById('editTags').value = Array.isArray(post.data.tags) ? post.data.tags.join(', ') : '';
-          document.getElementById('editContent').value = post.content.trim();
-        }
-      } catch (e) {}
-    }
-
-    // 保存文章
-    async function savePost() {
-      const title = document.getElementById('editTitle').value;
-      const categories = document.getElementById('editCategories').value.split(',').map(s => s.trim()).filter(s => s);
-      const tags = document.getElementById('editTags').value.split(',').map(s => s.trim()).filter(s => s);
-      const content = document.getElementById('editContent').value;
-      
-      try {
-        const res = await fetch(`${API_BASE}/posts`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            filename: currentFilename || title,
-            title,
-            categories,
-            tags,
-            content
-          })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          alert('文章已保存');
-          closeEditor();
-          loadPosts();
-          loadStats();
-        } else {
-          alert('保存失败：' + data.error);
-        }
-      } catch (e) {
-        alert('保存失败，请重试');
-      }
-    }
-
-    // 删除文章
-    async function deletePost(filename) {
-      if (!confirm('确定要删除这篇文章吗？')) return;
-      
-      try {
-        const res = await fetch(`${API_BASE}/posts/${filename}`, { method: 'DELETE' });
-        const data = await res.json();
-        
-        if (data.success) {
-          alert('文章已删除');
-          loadPosts();
-          loadStats();
-        } else {
-          alert('删除失败：' + data.error);
-        }
-      } catch (e) {
-        alert('删除失败，请重试');
-      }
+    function loadPosts() {
+      const tbody = document.getElementById('postsList');
+      tbody.innerHTML = samplePosts.map(post => `
+        <tr>
+          <td>${post.title}</td>
+          <td>${post.date}</td>
+          <td>${Array.isArray(post.categories) ? post.categories.join(', ') : post.categories}</td>
+          <td>${Array.isArray(post.tags) ? post.tags.join(', ') : post.tags}</td>
+          <td class="actions">
+            <a href="https://github.com/lcccdk/aijvs-blog/edit/main/source/_posts/${encodeURIComponent(post.filename)}" 
+               target="_blank" 
+               class="btn-sm btn-edit">在 GitHub 编辑</a>
+          </td>
+        </tr>
+      `).join('');
     }
 
     // 页面加载时检查登录状态
