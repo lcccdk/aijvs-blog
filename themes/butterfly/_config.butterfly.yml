@@ -1,0 +1,332 @@
+# AIJVS Butterfly 主题配置
+
+# --------------------------------------
+# Navigation Settings
+# --------------------------------------
+
+nav:
+  logo:
+  display_title: true
+  display_post_title: true
+  fixed: false
+
+menu:
+  首页：/ || fas fa-home
+  分类：/categories/ || fas fa-folder-open
+  标签：/tags/ || fas fa-tags
+  归档：/archives/ || fas fa-archive
+
+# --------------------------------------
+# Code Blocks Settings
+# --------------------------------------
+
+code_blocks:
+  theme: one dark
+  macStyle: false
+  height_limit: false
+  word_wrap: false
+  copy: true
+  language: true
+  shrink: false
+  fullpage: false
+
+# --------------------------------------
+# Social media links
+# --------------------------------------
+
+social:
+  fab fa-github: https://github.com/aijvs || Github || '#24292e'
+
+# --------------------------------------
+# Image Settings
+# --------------------------------------
+
+favicon: /img/favicon.ico
+
+avatar:
+  img: /img/avatar.png
+  effect: false
+
+disable_top_img: false
+default_top_img:
+index_img:
+archive_img:
+tag_img:
+tag_per_img:
+category_img:
+category_per_img:
+footer_img: false
+background:
+
+cover:
+  index_enable: true
+  archive_enable: true
+  page_enable: true
+  post_default: true
+
+post_cover:
+  top: false
+  mode: cover
+
+# --------------------------------------
+# Index Post Layout
+# --------------------------------------
+
+index_post_content:
+  method: 1
+  length: 300
+
+# --------------------------------------
+# Pagination
+# --------------------------------------
+
+pagination:
+  enable: true
+  type: 1
+  prev_text: '<i class="fas fa-arrow-left"></i>'
+  next_text: '<i class="fas fa-arrow-right"></i>'
+  load_more_text: ''
+
+# --------------------------------------
+# Post Settings
+# --------------------------------------
+
+post:
+  meta:
+    date: true
+    updated: true
+    author: true
+    tags: true
+    categories: true
+    read_time: false
+    word_count: false
+    count: true
+  copyright:
+    enable: true
+    limit: 50
+  edit:
+    enable: false
+  toc:
+    enable: true
+    number: true
+    expand: true
+    style_simple: false
+
+# --------------------------------------
+# Search Settings
+# --------------------------------------
+
+search:
+  enable: true
+  type: local
+  placeholder: '搜索文章...'
+
+# --------------------------------------
+# Share System
+# --------------------------------------
+
+share:
+  enable: true
+  type: builtin
+
+# --------------------------------------
+# Comments System
+# --------------------------------------
+
+comments:
+  enable: false
+  use: ''
+  text: true
+  lazyload: false
+  count: false
+
+# --------------------------------------
+# Footer Settings
+# --------------------------------------
+
+footer:
+  owner:
+    enable: true
+    since: 2026
+  author:
+    enable: true
+  copy:
+    enable: true
+  custom_text: ''
+
+# --------------------------------------
+# SEO Settings
+# --------------------------------------
+
+seo:
+  enable: true
+
+# --------------------------------------
+# Comment Widget
+# --------------------------------------
+
+comment_widget:
+  enable: false
+
+# --------------------------------------
+# TOC Widget
+# --------------------------------------
+
+toc_widget:
+  enable: false
+
+# --------------------------------------
+# Random Post
+# --------------------------------------
+
+random_post:
+  enable: false
+
+# --------------------------------------
+# Post Edit
+# --------------------------------------
+
+post_edit:
+  enable: false
+
+# --------------------------------------
+# Related Articles
+# --------------------------------------
+
+related_post:
+  enable: true
+  limit: 3
+  type: 1
+
+# --------------------------------------
+# Date Format
+# --------------------------------------
+
+date_format: YYYY-MM-DD
+datetime_format: 'YYYY-MM-DD HH:mm:ss'
+lang_date_format: 'LL'
+
+# --------------------------------------
+# Read Mode
+# --------------------------------------
+
+readmode: true
+
+# --------------------------------------
+# Dark Mode
+# --------------------------------------
+
+darkmode:
+  enable: true
+  autoChangeMode: 1
+  button: true
+
+# --------------------------------------
+# WordCount
+# --------------------------------------
+
+wordcount:
+  enable: false
+
+# --------------------------------------
+# Busuanzi
+# --------------------------------------
+
+busuanzi:
+  enable: false
+
+# --------------------------------------
+# Footer Message
+# --------------------------------------
+
+footer_msg:
+  enable: true
+  start: 2026
+  owner: 'AIJVS Team'
+
+# --------------------------------------
+# Tag Plugins
+# --------------------------------------
+
+note:
+  style: flat
+  icons: true
+  border_radius: 3
+  offset: 12 24 0 0
+
+hide:
+  enable: false
+
+# --------------------------------------
+# Other Settings
+# --------------------------------------
+
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+  display:
+    archive: true
+    tag: true
+    category: true
+  card_author:
+    enable: true
+    description: '免费开源的深度学习和 AI 学习网站'
+  card_announcement:
+    enable: false
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: date
+  card_categories:
+    enable: true
+    limit: 8
+    expand: all
+  card_tags:
+    enable: true
+    limit: 40
+    color: false
+    highlight: true
+    order_type: random
+  card_archives:
+    enable: false
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date: true
+    sort: date
+
+# --------------------------------------
+# Speed Mode
+# --------------------------------------
+
+speed_mode:
+  enable: false
+
+# --------------------------------------
+# PWA
+# --------------------------------------
+
+pwa:
+  enable: false
+  manifest: /manifest.json
+  theme_color: '#49b1f5'
+  apple_touch_icon: /img/apple-touch-icon.png
+  mask_icon: /img/safari-pinned-tab.svg
+
+# --------------------------------------
+# Inject
+# --------------------------------------
+
+inject:
+  enable: false
+
+# --------------------------------------
+# CDN Settings
+# --------------------------------------
+
+cdn:
+  # CDN Provider: cdnjs / jsdelivr / unpkg / elemecdn / custom
+  provider: jsdelivr
